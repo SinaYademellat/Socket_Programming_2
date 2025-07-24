@@ -7,7 +7,8 @@
 
 #define PORT 8080
 
-int main() {
+int main(int argc, char const *argv[])
+{
     struct sockaddr_in serv_addr;
 
     // Create socket
@@ -35,10 +36,17 @@ int main() {
     }
 
     // Send data
-    const char *Massage = "test Massage";
-    send(sock, Massage, strlen(Massage), 0);
-    std::cout << "Message sent!" << std::endl;
-
+    std::cout<<"argc: "<<argc<<std::endl;
+    if(argc >= 2){
+      const char *Massage = argv[1];
+      send(sock, Massage, strlen(Massage), 0);
+      std::cout << "Message sent!" << std::endl;
+    }
+    else{    
+      const char *Massage = "test Massage";
+      send(sock, Massage, strlen(Massage), 0);
+      std::cout << "Message sent!" << std::endl;
+    }
     close(sock);
 
     return 0;
