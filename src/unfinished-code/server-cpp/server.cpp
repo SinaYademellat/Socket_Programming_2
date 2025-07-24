@@ -1,4 +1,5 @@
 #include "server.h"
+#include "serverThread.h"
 
 Server::Server(bool flag){
     set("server-config.json");
@@ -23,11 +24,14 @@ void Server::Run(){
         }
 
         // *************************************
-         std::cout << "Server listening on " << m_ipServer << ":" << m_portConfigServer << "\n";
-
+        std::cout << "Server listening on " << m_ipServer << ":" << m_portConfigServer << "\n";
         std::cout<<"["<<m_counter <<"] >> \n";
         int new_socket = accept(m_server_fd, (struct sockaddr *)&m_address, (socklen_t *)&addrlen);
-
+         // *************************************
+        std::thread t(handleData, m_counter );
+        t.detach();
+        // *************************************
+       
         // *************************************
         if (new_socket < 0) {
             perror("accept");
