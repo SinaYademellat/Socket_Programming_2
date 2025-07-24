@@ -1,8 +1,7 @@
 #include "server.h"
-#include "serverThread.h"
 
 Server::Server(bool flag){
-    set("server-config.json");
+    set("data.json");
     if(flag){
         show();
     }
@@ -28,8 +27,14 @@ void Server::Run(){
         std::cout<<"["<<m_counter <<"] >> \n";
         int new_socket = accept(m_server_fd, (struct sockaddr *)&m_address, (socklen_t *)&addrlen);
          // *************************************
-        std::thread t(handleData, m_counter );
-        t.detach();
+        // std::thread t(handleData, m_counter );
+        // t.detach();
+        // ~~~~~~~~~~~~~
+        TestThread tmp;
+        std::thread B(&TestThread::Run, &tmp, m_counter);
+        B.detach();
+
+        this->dataListIs.push_back(&tmp);
         // *************************************
        
         // *************************************
@@ -41,6 +46,11 @@ void Server::Run(){
         char buffer[1024] = {0};
         read(new_socket, buffer, 1024);
         std::cout <<"["<< m_counter  <<"] Message from client: " << buffer << std::endl;
+        std::string message(buffer);
+        if(message =="c0"){
+            this->dataListIs[0]->flag=false;
+            std::cout<< "[[[[[[[[[[[]]]]]]]]]]]\n";
+        }
         std::cout<<" ------------- \n ";
         close(new_socket);
         // *************************************
@@ -52,7 +62,20 @@ void Server::Run(){
 
 void Server::set(string path){
     std::ifstream f(path);
+    if (!f.is_open()) {
+        std::cerr << "Failed to open data.json" << std::endl;
+        return;
+    }
+
+    if (f.peek() == std::ifstream::traits_type::eof()) {
+        std::cerr << "File is empty!" << std::endl;
+        return;
+    }
+
     json data = json::parse(f);
+
+    // std::ifstream f(path);
+    // json data = json::parse(f);
 
     m_Username          = data["Username"];
     m_Password          = data["Password"];
