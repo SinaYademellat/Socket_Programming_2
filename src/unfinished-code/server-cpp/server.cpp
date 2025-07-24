@@ -1,62 +1,16 @@
-// sudo apt install nlohmann-json3-dev
-#include <iostream>
-#include <string>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <cstring>
-#include <thread>
-
-#include <fstream>
-#include <nlohmann/json.hpp>
-
-using namespace std;
-using json = nlohmann::json;
-
-class Server{
-    public:
-        Server(bool flag);
-        // ~Server();
-        
-        void Run();
-
-    private:
-        void set();
-        void show();
-        
-        void converIp();
-        void setSocket();
-        
-        string m_Username;
-        string m_Password;
-        string m_ipServer;
-
-        int m_portConfigServer;
-        int m_portChartServer;
-
-        struct in_addr ipv4_addr;
-        struct sockaddr_in m_address;
-        int m_server_fd;
-
-        int m_counter = 0 ;
-
-};
-
-
-int main(int argc, char const *argv[]){
-    Server A(false);
-    A.Run();
-    return 0;
-}
+#include "server.h"
 
 Server::Server(bool flag){
-    this->set();
+    set("server-config.json");
     if(flag){
-        this->show();
+        show();
     }
     converIp();
 }
+
+Server::~Server(){};
+
+// +++++++++++++++++++++++++++++++++++
 
 void Server::Run(){
     setSocket();
@@ -90,8 +44,10 @@ void Server::Run(){
     }
 }
 
-void Server::set(){
-    std::ifstream f("server-config.json");
+// +++++++++++++++++++++++++++++++++++
+
+void Server::set(string path){
+    std::ifstream f(path);
     json data = json::parse(f);
 
     m_Username          = data["Username"];
@@ -103,15 +59,17 @@ void Server::set(){
 
 
 void Server::show(){
+    std::cout << " ------------------ "<<std::endl;
     std::cout << m_Username<< std::endl;
     std::cout << m_Password << std::endl;
     std::cout << m_ipServer << std::endl;
     std::cout << m_portConfigServer << std::endl;
     std::cout << m_portChartServer  << std::endl;
+    std::cout << " ------------------ "<<std::endl;
+
 }
 
-void Server::converIp()
-{
+void Server::converIp(){
     int result_ipv4 = inet_pton(AF_INET, m_ipServer.c_str(), &ipv4_addr);
     if (result_ipv4 == 1) {
         std::cout << "Successfully converted IPv4: " << m_ipServer << std::endl;
@@ -122,8 +80,7 @@ void Server::converIp()
     }
 }
 
-void Server::setSocket()
-{
+void Server::setSocket(){
     // ++++++++++++++++++++++++++++++++++++++++
     m_server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_server_fd == 0) {
