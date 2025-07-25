@@ -13,6 +13,10 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
+#include <mutex>
+#include <memory>
+
+
 #include "serverThread.h"
 
 
@@ -39,6 +43,8 @@ class Server{
         int  createTcpSocket();
         void bindCmdSocket();
 
+        void processClientCommand(const string& message);
+
         
         string m_Username;
         string m_Password;
@@ -53,7 +59,8 @@ class Server{
 
         int m_counter = 0 ;
 
-        vector< TestThread *> dataListIs;
+        std::vector<std::shared_ptr<TestThread>> m_dataListIs;
+
 };
 
 

@@ -24,36 +24,31 @@ void Server::Run(){
         // *************************************
         std::cout << "Server listening on " << m_ipServer << ":" << m_portConfigServer << "\n";
         std::cout<<"["<<m_counter <<"] >> \n";
+        //  ------------------------------
         int new_socket = accept(m_server_fd, (struct sockaddr *)&m_address, (socklen_t *)&addrlen);
-         // *************************************
-        // std::thread t(handleData, m_counter );
-        // t.detach();
-        // ~~~~~~~~~~~~~
-        TestThread tmp;
-        std::thread B(&TestThread::Run, &tmp, m_counter);
-        B.detach();
-
-        this->dataListIs.push_back(&tmp);
-        // *************************************
-       
-        // *************************************
         if (new_socket < 0) {
             perror("accept");
             exit(EXIT_FAILURE);
         }
+         // *************************************
+        auto tmp = std::make_shared<TestThread>(m_counter);
+        std::thread T(std::bind(&TestThread::Run, tmp, m_counter));
+        T.detach();
+        this->m_dataListIs.push_back(tmp);
         // *************************************
         char buffer[1024] = {0};
         read(new_socket, buffer, 1024);
-        std::cout <<"["<< m_counter  <<"] Message from client: " << buffer << std::endl;
-        std::string message(buffer);
-        if(message =="c0"){
-            this->dataListIs[0]->flag=false;
-            std::cout<< "[[[[[[[[[[[]]]]]]]]]]]\n";
-        }
-        std::cout<<" ------------- \n ";
+        string message(buffer);
+
+        // cout <<"["<< m_counter  <<"] Message from client: " << message << endl;
+
         close(new_socket);
         // *************************************
+        processClientCommand(message);
         m_counter +=1;
+        // *************************************
+        cout<<" ------------- \n ";
+
     }
 }
 
@@ -164,5 +159,24 @@ void Server::bindCmdSocket() {
         perror("Bind failed");
         close(m_server_fd);
         exit(EXIT_FAILURE);
+    }
+}
+
+
+void Server::processClientCommand(const std::string& message) {
+    cout<<"$: ";
+
+    if (message == "ls") {
+        std::cout << "Listing all threads:\n";
+        for (int i = 0; i < this->m_dataListIs.size(); i++) {
+            std::cout << "Thread index [" << i << "] : ";
+            this->m_dataListIs[i]->showInfo();
+        }
+    }
+    else if (message == "stop-0"){
+        this->m_dataListIs[0]->flag = false;
+    }
+    else {
+        std::cout << "Unknown command: " << message << std::endl;
     }
 }
