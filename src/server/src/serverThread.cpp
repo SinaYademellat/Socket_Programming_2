@@ -3,7 +3,7 @@
 
 TestThread::TestThread(int id){
     this->m_flag = true;
-    this->m_Id   = id;
+    this->m_id   = id;
 }
 
 void TestThread::Run(int cmd_number){
@@ -14,6 +14,7 @@ void TestThread::Run(int cmd_number){
     int counter_Packet = 1;
     std::string massag = "testPacket";
     while((this->m_flag)&&(counter_Packet<10)){
+        /// 
         this->setPacket(counter_Packet , massag);
         this->sendPacket();
         counter_Packet+=1;
@@ -24,7 +25,7 @@ void TestThread::Run(int cmd_number){
 }
 
 void TestThread::showInfo(){
-    std::cout<<"Id:"<<m_Id<<std::endl;
+    std::cout<<"Id:"<<m_id<<std::endl;
 }
 
 void TestThread::setDataSocket(std::string server_ip, uint16_t data_port){

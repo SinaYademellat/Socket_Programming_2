@@ -68,11 +68,13 @@ int main(int argc, char const *argv[])
     socklen_t client_len = sizeof(client_addr);
     char buffer[1024];
 
-    while (true) {
-        // دریافت داده از کلاینت
+    int index_J ;
+    for (index_J = 1 ; index_J< 5 ; index_J++) {
+        
+        std::cout<<"$ "<<index_J<<" $  ";
         int received_len = recvfrom(UDPSocket, buffer, 1024, 0, (struct sockaddr *)&client_addr, &client_len);
         if (received_len < 0) {
-            std::cerr << "recvfrom failed" << std::endl;
+            std::cerr << " recvfrom failed" << std::endl;
             continue;
         }
 
