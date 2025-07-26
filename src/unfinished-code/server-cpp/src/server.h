@@ -11,6 +11,10 @@
 #include <thread>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <vector>
+
+#include "serverThread.h"
+
 
 using namespace std;
 using json = nlohmann::json;
@@ -42,6 +46,8 @@ class Server{
 
         int m_counter = 0 ;
 
+        // TestThread
+        vector< TestThread *> dataListIs;
 };
 
 
