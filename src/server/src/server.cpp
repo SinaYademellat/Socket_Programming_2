@@ -174,7 +174,7 @@ void Server::processClientCommand(const std::string& message) {
         }
     }
     else if (message == "stop-0"){
-        this->m_dataListIs[0]->flag = false;
+        this->m_dataListIs[0]->m_flag = false;
     }
     else {
         std::cout << "Unknown command: " << message << std::endl;
