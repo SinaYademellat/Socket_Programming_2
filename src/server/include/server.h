@@ -3,19 +3,25 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <cstring>
 #include <thread>
 #include <fstream>
-#include <nlohmann/json.hpp>
-#include <vector>
 
-#include <mutex>
+#include <vector>
+#include <nlohmann/json.hpp>
+
 #include <memory>
 
+// Openssl
+#include <arpa/inet.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+// --------
 
 #include "serverThread.h"
 
@@ -29,6 +35,7 @@ class Server{
         ~Server();
 
         void Run();
+        void Run_SSL(uint16_t PORT);
         
     private:
 
@@ -45,6 +52,13 @@ class Server{
 
         void processClientCommand(const string& message);
 
+        // ++++++++++++++++++++++++++++
+        void InitSSL();
+        SSL_CTX* CreateContext();
+        void ConfigureContext(SSL_CTX* ctx);
+        // . . . . . . .  . . .
+        SSL_CTX* m_ctx;
+        // // ------------------------------
         
         string m_Username;
         string m_Password;

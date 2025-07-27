@@ -21,7 +21,7 @@ class TestThread{
         void setPacket(int header , std::string message);
         void sendPacket();
 
-        int m_Id;
+        int m_id;
         int m_data_socket;
 
         int m_packet_index = 0;
