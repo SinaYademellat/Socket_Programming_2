@@ -64,3 +64,43 @@ void TestThread::sendPacket(){
     std::cout << "Packet sent (" << sent_bytes << " bytes)" << std::endl;
 
 }
+
+// -------------------------------------
+void TestThread::setBroadcastSocket(){
+
+    // Create UDP socket
+    m_broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (m_broadcast_socket < 0) {
+        std::cerr << "Error creating socket" << std::endl;
+    }
+
+    // Enable broadcast option
+    int broadcast_enable = 1;
+    if (setsockopt(m_broadcast_socket, SOL_SOCKET, SO_BROADCAST, &broadcast_enable, sizeof(broadcast_enable)) < 0) {
+        std::cerr << "Error setting broadcast option" << std::endl;
+        close(m_broadcast_socket);
+    }
+}
+
+void TestThread::Run_broadcast(uint16_t Port){
+    
+    this->setBroadcastSocket();
+
+    struct sockaddr_in broadcast_addr;
+    char message[] = "code << Server >>  127.0.0.5:8081";
+
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(12345);
+    broadcast_addr.sin_addr.s_addr = INADDR_BROADCAST; // Universal broadcast
+
+    while (this->m_flag)
+    {
+        if (sendto(m_broadcast_socket, message, sizeof(message), 0, (struct sockaddr*)&broadcast_addr, sizeof(broadcast_addr)) < 0) {
+            std::cerr << "Error sending broadcast message" << std::endl;
+            close(m_broadcast_socket);
+        }
+        // std::cout << "Broadcast message sent!" << std::endl;
+    }
+   
+    close(m_broadcast_socket);
+}

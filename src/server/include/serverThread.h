@@ -13,6 +13,14 @@ class TestThread{
 
         void Run(int cmd_number);
         void showInfo();
+
+        // ----------------------
+        void Run_broadcast(uint16_t Port);
+
+        // int m_socket_broadcast;
+        int m_broadcast_socket;
+        // ---------------------
+
         bool m_flag = true;
 
     private:
@@ -20,6 +28,9 @@ class TestThread{
         void setDataSocket(std::string server_ip,uint16_t data_port);
         void setPacket(int header , std::string message);
         void sendPacket();
+
+
+        void setBroadcastSocket();
 
         int m_id;
         int m_data_socket;
