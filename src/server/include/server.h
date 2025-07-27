@@ -35,7 +35,7 @@ class Server{
         ~Server();
 
         void Run();
-        // void Run_SSL(uint16_t PORT);
+        void Run_SSL(uint16_t PORT);
         
     private:
 
@@ -52,14 +52,12 @@ class Server{
 
         void processClientCommand(const string& message);
 
-        // // ++++++++++++++++++++++++++++
-        // void sslCmdSocket();
-        // void InitSSL();
-        // SSL_CTX* CreateContext();
-        // void ConfigureContext(SSL_CTX* ctx);
-        // // . . . . . . .  . . .
-        // SSL_CTX* m_ctx;
-        // int m_server_fd_SSL;
+        // ++++++++++++++++++++++++++++
+        void InitSSL();
+        SSL_CTX* CreateContext();
+        void ConfigureContext(SSL_CTX* ctx);
+        // . . . . . . .  . . .
+        SSL_CTX* m_ctx;
         // // ------------------------------
         
         string m_Username;

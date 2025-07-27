@@ -30,11 +30,12 @@ int main() {
         std::cerr << "SSL connect failed\n";
         ERR_print_errors_fp(stderr);
     } else {
-        std::cout << "Connected with SSL\n";
-        SSL_write(ssl, "Hello from client (SSL)", 24);
+        std::cout << "Connected with SSL\n";        
+        SSL_write(ssl, "test from client (SSL)", 24);
         char buf[1024] = {0};
+        
         int len = SSL_read(ssl, buf, sizeof(buf));
-        std::cout << "Server says: " << buf << "\n";
+        // std::cout << "Server says: " << buf << "\n";
     }
 
     SSL_shutdown(ssl);
