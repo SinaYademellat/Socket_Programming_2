@@ -16,3 +16,14 @@ add_custom_command(TARGET server POST_BUILD
         ${CMAKE_SOURCE_DIR}/resources/data.json
         $<TARGET_FILE_DIR:server>
 )
+
+# add_custom_command(TARGET server POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_SOURCE_DIR}/resources/cert.pem
+#         $<TARGET_FILE_DIR:server>
+# )
+# add_custom_command(TARGET server POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         ${CMAKE_SOURCE_DIR}/resources/key.pem
+#         $<TARGET_FILE_DIR:server>
+# )

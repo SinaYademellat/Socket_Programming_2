@@ -180,3 +180,64 @@ void Server::processClientCommand(const std::string& message) {
         std::cout << "Unknown command: " << message << std::endl;
     }
 }
+
+
+// // ***********************************************
+// void Server::Run_SSL(uint16_t PORT){
+//     this->InitSSL();
+//     this->m_ctx = CreateContext();
+//     ConfigureContext(m_ctx);
+//     // m_server_fd
+//     // Socket
+//     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+//     if (server_fd < 0) {
+//         perror("Cannot create socket");
+//         exit(1);
+//     }
+//     sockaddr_in addr{};
+//     addr.sin_family = AF_INET;
+//     addr.sin_port = htons(PORT);
+//     addr.sin_addr.s_addr = INADDR_ANY;
+//     // bind(server_fd, (sockaddr*)&addr, sizeof(addr));
+//     if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+//         perror("Bind failed");
+//         exit(1);
+//     }
+//     // listen(server_fd, 1);
+//     if (listen(server_fd, 1) < 0) {
+//         perror("Listen failed");
+//         exit(1);
+//     }
+//     for  (int k = 0 ; k<=3;k++) {
+//         std::cout <<"[ "<<k<<" ] "<<
+//          "Waiting for connection on port " << PORT 
+//          << "...\n";
+//          // ---------------
+//         sockaddr_in client_addr;
+//         socklen_t client_len = sizeof(client_addr);
+//         int client_sock = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+//         if (client_sock < 0) {
+//             perror("Accept failed");
+//             continue;  // If accept fails, continue accepting next client
+//         }
+//         // ---------------
+//         SSL* ssl = SSL_new(this->m_ctx);
+//         SSL_set_fd(ssl, client_sock);
+//         if (SSL_accept(ssl) <= 0) {
+//             ERR_print_errors_fp(stderr);
+//         } else {
+//             std::cout << "SSL handshake successful!" << std::endl;
+//             char buf[1024] = {0};
+//             int len = SSL_read(ssl, buf, sizeof(buf));
+//             std::cout << "Client says: " << buf << "\n";
+//             // const char* msg = "Hello from SSL server!";
+//             // SSL_write(ssl, msg, strlen(msg));
+//         }
+//         SSL_free(ssl);       // Free the SSL object after use
+//         close(client_sock);  // Close the client socket
+//     }
+//     close(server_fd);           // Close the server socket
+//     SSL_CTX_free(this->m_ctx);  // F
+// }
+// // ***********************************************
+

@@ -57,7 +57,6 @@ int main(int argc, char const *argv[])
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(8081);
 
-    // بایند کردن سوکت به آدرس و پورت
     if (bind(UDPSocket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         std::cerr << "Bind failed" << std::endl;
         return 1;
@@ -80,9 +79,5 @@ int main(int argc, char const *argv[])
 
         std::cout << "Received message: " << buffer << std::endl;
     }
-
-
-
-
     return 0;
 }
