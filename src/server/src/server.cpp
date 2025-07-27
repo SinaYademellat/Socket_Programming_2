@@ -41,8 +41,6 @@ void Server::Run(){
         read(new_socket, buffer, 1024);
         string message(buffer);
 
-        // cout <<"["<< m_counter  <<"] Message from client: " << message << endl;
-
         close(new_socket);
         // *************************************
         processClientCommand(message);
@@ -163,7 +161,6 @@ void Server::bindCmdSocket() {
     }
 }
 
-
 void Server::processClientCommand(const std::string& message) {
     cout<<"$: ";
 
@@ -183,43 +180,41 @@ void Server::processClientCommand(const std::string& message) {
 }
 
 
-// // ***********************************************
+// **********************************************************
+// ****************** << SSL >> *****************************
 
 void Server::Run_SSL(uint16_t PORT){
-    this->InitSSL();
+    InitSSL();
     this->m_ctx = CreateContext();
     ConfigureContext(m_ctx);
-    // Socket
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd < 0) {
-        perror("Cannot create socket");
-        exit(1);
-    }
+    createTcpSocket_SSLType();
+    
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(PORT);
     addr.sin_addr.s_addr = INADDR_ANY;
-    // bind(server_fd, (sockaddr*)&addr, sizeof(addr));
-    if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+    if (bind(m_server_fd_SSL, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         perror("Bind failed");
         exit(1);
     }
-    // listen(server_fd, 1);
-    if (listen(server_fd, 1) < 0) {
+    
+    if (listen(m_server_fd_SSL, 3) < 0) {
         perror("Listen failed");
         exit(1);
     }
+
     for  (int k = 1 ; k<3;k++) {
+        std::cout << " ----------------- " << std::endl;
         std::cout <<"[ "<<k<<" ] "<<
          "Waiting for connection on port " << PORT 
          << "...\n";
-         // ---------------
+        // ---------------
         sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);
-        int client_sock = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+        int client_sock = accept(m_server_fd_SSL, (struct sockaddr*)&client_addr, &client_len);
         if (client_sock < 0) {
             perror("Accept failed");
-            continue;  // If accept fails, continue accepting next client
+            continue;
         }
         // ---------------
         SSL* ssl = SSL_new(this->m_ctx);
@@ -231,17 +226,13 @@ void Server::Run_SSL(uint16_t PORT){
             char buf[1024] = {0};
             int len = SSL_read(ssl, buf, sizeof(buf));
             std::cout << "Client says: " << buf << "\n";
-            // const char* msg = "Hello from SSL server!";
-            // SSL_write(ssl, msg, strlen(msg));
         }
-        SSL_free(ssl);       // Free the SSL object after use
-        close(client_sock);  // Close the client socket
+        SSL_free(ssl);
+        close(client_sock);
     }
-    close(server_fd);        // Close the server socket
+    close(m_server_fd_SSL);
     SSL_CTX_free(this->m_ctx); 
 }
-
-// ***********************************************
 
 void Server::InitSSL() {
     SSL_library_init();
@@ -266,3 +257,14 @@ void Server::ConfigureContext(SSL_CTX* ctx) {
     }
 }
 
+void Server::createTcpSocket_SSLType(){
+    this->m_server_fd_SSL = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_server_fd_SSL < 0) {
+        perror("Cannot create socket");
+        exit(1);
+    }
+}
+
+
+// ****************** << SSL >> *****************************
+// **********************************************************

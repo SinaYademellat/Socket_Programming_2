@@ -56,8 +56,10 @@ class Server{
         void InitSSL();
         SSL_CTX* CreateContext();
         void ConfigureContext(SSL_CTX* ctx);
+        void createTcpSocket_SSLType();
         // . . . . . . .  . . .
         SSL_CTX* m_ctx;
+        int m_server_fd_SSL;
         // // ------------------------------
         
         string m_Username;
