@@ -6,7 +6,7 @@
 
 #define PORT 4443
 
-int main() {
+int main(int argc, char const *argv[]) {
     SSL_library_init();
     SSL_load_error_strings();
     OpenSSL_add_all_algorithms();
@@ -30,12 +30,18 @@ int main() {
         std::cerr << "SSL connect failed\n";
         ERR_print_errors_fp(stderr);
     } else {
-        std::cout << "Connected with SSL\n";        
-        SSL_write(ssl, "test from client (SSL)", 24);
-        char buf[1024] = {0};
         
+        std::cout << "Connected with SSL\n";        
+        if(argc>=2){
+
+            const char *Massage = argv[1];
+            SSL_write(ssl, Massage, 24);
+        }
+        else{  
+                SSL_write(ssl, "test from client (SSL)", 24);
+        }
+        char buf[1024] = {0};
         int len = SSL_read(ssl, buf, sizeof(buf));
-        // std::cout << "Server says: " << buf << "\n";
     }
 
     SSL_shutdown(ssl);
