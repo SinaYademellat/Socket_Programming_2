@@ -44,6 +44,7 @@ void Server::Run(){
         close(new_socket);
         // *************************************
         processClientCommand(message);
+        // processClientCommand_JsonType(message);
         m_counter +=1;
         // *************************************
         cout<<" ------------- \n ";
@@ -178,6 +179,19 @@ void Server::processClientCommand(const std::string& message) {
         std::cout << "Unknown command: " << message << std::endl;
     }
 }
+
+void Server::processClientCommand_JsonType(const std::string& received_json_string) {
+
+    json received_data = json::parse(received_json_string);
+
+    std::string value_1 = received_data["key1"].get<std::string>();
+    std::cout<<"$: key1: " << value_1 <<std::endl;
+
+    int value_ = received_data["key2"].get<int>();
+    std::cout<<"$: key2: " << value_ <<std::endl;
+
+}
+
 
 
 // **********************************************************

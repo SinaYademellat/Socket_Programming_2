@@ -51,6 +51,7 @@ class Server{
         void bindCmdSocket();
 
         void processClientCommand(const string& message);
+        void processClientCommand_JsonType(const string& received_json_string);
 
         // ++++++++++++++++++++++++++++
         void InitSSL();
