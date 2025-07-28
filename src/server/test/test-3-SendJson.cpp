@@ -30,34 +30,23 @@ int main(int argc, char const *argv[])
       return -1;
     }
 
-    // // Send data
-    std::cout<<"argc: "<<argc<<std::endl;
-    if(argc >= 2){
-      const char *Massage = argv[1];
-      send(sock, Massage, strlen(Massage), 0);
-      std::cout << "Message sent!" << std::endl;
-    }
-    else{    
-    
-        nlohmann::json request_data = {
+    // Send data
+    // ************************************** JSON
+    nlohmann::json request_data = {
         {"key1", "value1"},
         {"key2", 123},
-        {"array_key", {1, 2, 3}}
-        };
-    
-        // Convert 
-        std::string json_string = request_data.dump();
-        
-        std::cout<< " ^^^^^^^^^^^^^^^^^^^^^^^ " <<std::endl;
-        std::cout<<" Json_string: "<< json_string << std::endl;
-        std::cout<< " vvvvvvvvvvvvvvvvvvvvvvv " <<std::endl;
+    };
 
-        const char *Massage = json_string.c_str();
-        send(sock, Massage, strlen(Massage), 0);
-        std::cout << "Message sent!" << std::endl;
-    }
-    // ***************************************
-    // ************************************** JSON
+    // Convert 
+    std::string json_string = request_data.dump();
+    
+    std::cout<< " ^^^^^^^^^^^^^^^^^^^^^^^ " <<std::endl;
+    std::cout<<" Json_string: "<< json_string << std::endl;
+    std::cout<< " vvvvvvvvvvvvvvvvvvvvvvv " <<std::endl;
+
+    const char *Massage = json_string.c_str();
+    send(sock, Massage, strlen(Massage), 0);
+    std::cout << "Message sent!" << std::endl;
 
     // ************************************** JSON
 
