@@ -12,8 +12,13 @@ void TestThread::Run(int cmd_number){
     this->setDataSocket("127.0.0.5" , 8081);
 
     int counter_Packet = 1;
-    std::string massag = "testPacket";
-    while((this->m_flag)&&(counter_Packet<10)){
+
+
+    while((this->m_flag)&&(counter_Packet<=5)){
+        // 
+        std::string p1 = "testPacket_";
+        std::string p2 = std::to_string(counter_Packet); 
+        std::string massag = p1 + p2; 
         /// 
         this->setPacket(counter_Packet , massag);
         this->sendPacket();
