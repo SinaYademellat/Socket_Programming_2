@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <nlohmann/json.hpp>
+
 
 class TestThread{
     public:
@@ -16,8 +18,10 @@ class TestThread{
 
         // ----------------------
         void Run_broadcast(uint16_t Port);
+        void Run_BroadcastJson(uint16_t Port);
+        
+        void Run_BroadcastJson_codePart( std::string servercode , uint16_t Port = 12345);
 
-        // int m_socket_broadcast;
         int m_broadcast_socket;
         // ---------------------
 

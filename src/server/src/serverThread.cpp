@@ -12,8 +12,13 @@ void TestThread::Run(int cmd_number){
     this->setDataSocket("127.0.0.5" , 8081);
 
     int counter_Packet = 1;
-    std::string massag = "testPacket";
-    while((this->m_flag)&&(counter_Packet<10)){
+
+
+    while((this->m_flag)&&(counter_Packet<=5)){
+        // 
+        std::string p1 = "testPacket_";
+        std::string p2 = std::to_string(counter_Packet); 
+        std::string massag = p1 + p2; 
         /// 
         this->setPacket(counter_Packet , massag);
         this->sendPacket();
@@ -104,3 +109,84 @@ void TestThread::Run_broadcast(uint16_t Port){
    
     close(m_broadcast_socket);
 }
+
+void TestThread::Run_BroadcastJson(uint16_t Port){
+    
+    this->setBroadcastSocket();
+
+    struct sockaddr_in broadcast_addr;
+    
+    nlohmann::json request_data = {
+        {"Code", "nopassword"},
+        {"Ip", "127.0.0.5"},
+        {"Port", 8081},
+    };
+
+    // Convert 
+    std::string json_string = request_data.dump();
+    std::cout<< " ^^^^^^^^^^^^^^^^^^^^^^^ " <<std::endl;
+    std::cout<<" Json_string: "<< json_string << std::endl;
+    std::cout<< " vvvvvvvvvvvvvvvvvvvvvvv " <<std::endl;
+    // return;
+    // char message[] = "code << Server >>  127.0.0.5:8081";
+    const char *message = json_string.c_str();
+
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(12345);
+    broadcast_addr.sin_addr.s_addr = INADDR_BROADCAST; // Universal broadcast
+
+    while (this->m_flag)
+    {
+        if (sendto(m_broadcast_socket, message, strlen(message), 0, (struct sockaddr*)&broadcast_addr, sizeof(broadcast_addr)) < 0) {
+            std::cerr << "Error sending broadcast message" << std::endl;
+            close(m_broadcast_socket);
+        }
+        // std::cout << "Broadcast message sent!" << std::endl;
+    }
+   
+    close(m_broadcast_socket);
+}
+
+
+
+
+void TestThread::Run_BroadcastJson_codePart( std::string servercode , uint16_t Port){
+    
+    this->setBroadcastSocket();
+
+    struct sockaddr_in broadcast_addr;
+    
+    nlohmann::json request_data = {
+        {"Code", servercode},
+        {"Ip", "127.0.0.5"},
+        {"Port", 8081},
+    };
+
+    // Convert 
+    std::string json_string = request_data.dump();
+    std::cout<< " ^^^^^^^^^^^^^^^^^^^^^^^ " <<std::endl;
+    std::cout<<" Json_string: "<< json_string << std::endl;
+    std::cout<< " vvvvvvvvvvvvvvvvvvvvvvv " <<std::endl;
+    // return;
+    // char message[] = "code << Server >>  127.0.0.5:8081";
+    const char *message = json_string.c_str();
+
+    broadcast_addr.sin_family = AF_INET;
+    broadcast_addr.sin_port = htons(Port);
+    broadcast_addr.sin_addr.s_addr = INADDR_BROADCAST; // Universal broadcast
+
+    while (this->m_flag)
+    {
+        if (sendto(m_broadcast_socket, message, strlen(message), 0, (struct sockaddr*)&broadcast_addr, sizeof(broadcast_addr)) < 0) {
+            std::cerr << "Error sending broadcast message" << std::endl;
+            close(m_broadcast_socket);
+        }
+        // std::cout << "Broadcast message sent!" << std::endl;
+    }
+   
+    close(m_broadcast_socket);
+}
+
+
+
+

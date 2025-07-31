@@ -4,7 +4,8 @@ Server::Server(string configPath , bool is_displayConfig){
     setUpConfig(configPath);
     if(is_displayConfig){
         showConfig();
-    }   
+    }
+    
 }
 
 Server::~Server(){};
@@ -23,7 +24,7 @@ void Server::Run(){
         }
 
         // *************************************
-        std::cout << "Server listening on " << m_ipServer << ":" << m_portConfigServer << "\n";
+        std::cout << "Server listening on " << m_ipServer << ":" << m_portCMD << "\n";
         std::cout<<"["<<m_counter <<"] >> \n";
         //  ------------------------------
         int new_socket = accept(m_server_fd, (struct sockaddr *)&m_address, (socklen_t *)&addrlen);
@@ -97,24 +98,28 @@ void Server::assignConfigValues(const json& data) {
     else
         std::cerr << "ipServer not found in config file!" << std::endl;
     // ++++++++++++++++++++++++++++++++++
-    if (data.find("portConfigServer") != data.end())
-        m_portConfigServer = data["portConfigServer"];
+    if (data.find("portCMD") != data.end())
+        m_portCMD = data["portCMD"];
     else
-        std::cerr << "portConfigServer not found in config file!" << std::endl;
-    // ++++++++++++++++++++++++++++++++++
-    if (data.find("portChartServer") != data.end())
-        m_portChartServer = data["portChartServer"];
-    else
-        std::cerr << "portChartServer not found in config file!" << std::endl;
+        std::cerr << "portCMD not found in config file!" << std::endl;
+    
+    // // ++++++++++++++++++++++++++++++++++
+    // if (data.find("portChartServer") != data.end())
+    //     m_portChartServer = data["portChartServer"];
+    // else
+    //     std::cerr << "portChartServer not found in config file!" << std::endl;
+
 }
 
 void Server::showConfig(){
     cout << " ------------------ "<<endl;
-    cout << m_Username<< endl;
-    cout << m_Password << endl;
-    cout << m_ipServer << endl;
-    cout << m_portConfigServer << endl;
-    cout << m_portChartServer  << endl;
+    cout <<"m_Username: "<< m_Username<< endl;
+    cout <<"m_Password: "<< m_Password << endl;
+    cout << " ~~~~~~~~ " <<endl;
+    cout <<"m_ipServer: "<< m_ipServer << endl;
+    cout <<"m_portCMD: "<< m_portCMD << endl;
+    cout << " ------------------ "<<endl;
+    // cout << m_portChartServer  << endl;
     cout << " ------------------ "<<endl;
 
 }
@@ -153,7 +158,7 @@ int Server::createTcpSocket() {
 void Server::bindCmdSocket() {
     m_address.sin_family = AF_INET;
     m_address.sin_addr.s_addr = ipv4_addr.s_addr;
-    m_address.sin_port = htons(m_portConfigServer);
+    m_address.sin_port = htons(m_portCMD);
 
     if (bind(m_server_fd, (struct sockaddr *)&m_address, sizeof(m_address)) < 0){
         perror("Bind failed");
@@ -234,6 +239,7 @@ void Server::Run_SSL(uint16_t PORT){
         SSL* ssl = SSL_new(this->m_ctx);
         SSL_set_fd(ssl, client_sock);
         if (SSL_accept(ssl) <= 0) {
+            std::cout<<" MMMMMM "<<std::endl;
             ERR_print_errors_fp(stderr);
         } else {
             std::cout << "SSL handshake successful!" << std::endl;
@@ -265,10 +271,21 @@ SSL_CTX* Server::CreateContext() {
 }
 
 void Server::ConfigureContext(SSL_CTX* ctx) {
-    if (!SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) ||
-        !SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM)) {
-        std::cerr << "Loading cert or key failed\n";
+    // if (!SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) ||
+    //     !SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM)) {
+    //     std::cerr << "Loading cert or key failed\n";
+    // }
+    if (SSL_CTX_use_certificate_file(ctx, "server.crt", SSL_FILETYPE_PEM) <= 0) {
+        std::cerr << "Loading certificate failed\n";
+        ERR_print_errors_fp(stderr);
     }
+
+    if (SSL_CTX_use_PrivateKey_file(ctx, "server.key", SSL_FILETYPE_PEM) <= 0) {
+        std::cerr << "Loading private key failed\n";
+        ERR_print_errors_fp(stderr);
+    }
+
+
 }
 
 void Server::createTcpSocket_SSLType(){
