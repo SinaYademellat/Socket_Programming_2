@@ -2,5 +2,8 @@
 *.out
 *.o
 *.pem
+*.key
+*.crt
+*.cnf
 .vscode/
 build/

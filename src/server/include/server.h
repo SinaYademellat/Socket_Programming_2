@@ -67,8 +67,8 @@ class Server{
         string m_Password;
         string m_ipServer;
 
-        int m_portConfigServer;
-        int m_portChartServer;
+        int m_portCMD;
+        // int m_portChartServer;
 
         struct in_addr ipv4_addr;
         struct sockaddr_in m_address;

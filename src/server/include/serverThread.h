@@ -20,7 +20,7 @@ class TestThread{
         void Run_broadcast(uint16_t Port);
         void Run_BroadcastJson(uint16_t Port);
         
-        void Run_BroadcastJson_codePart( std::string servercode , uint16_t Port);
+        void Run_BroadcastJson_codePart( std::string servercode , uint16_t Port = 12345);
 
         int m_broadcast_socket;
         // ---------------------
