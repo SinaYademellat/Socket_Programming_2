@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
             SSL_write(ssl, Massage, 24);
         }
         else{  
-                SSL_write(ssl, "test from client (SSL)", 24);
+                SSL_write(ssl, "## test from client (SSL)", 24);
         }
         char buf[1024] = {0};
         int len = SSL_read(ssl, buf, sizeof(buf));

@@ -234,6 +234,7 @@ void Server::Run_SSL(uint16_t PORT){
         SSL* ssl = SSL_new(this->m_ctx);
         SSL_set_fd(ssl, client_sock);
         if (SSL_accept(ssl) <= 0) {
+            std::cout<<" MMMMMM "<<std::endl;
             ERR_print_errors_fp(stderr);
         } else {
             std::cout << "SSL handshake successful!" << std::endl;
@@ -265,10 +266,21 @@ SSL_CTX* Server::CreateContext() {
 }
 
 void Server::ConfigureContext(SSL_CTX* ctx) {
-    if (!SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) ||
-        !SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM)) {
-        std::cerr << "Loading cert or key failed\n";
+    // if (!SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) ||
+    //     !SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM)) {
+    //     std::cerr << "Loading cert or key failed\n";
+    // }
+    if (SSL_CTX_use_certificate_file(ctx, "server.crt", SSL_FILETYPE_PEM) <= 0) {
+        std::cerr << "Loading certificate failed\n";
+        ERR_print_errors_fp(stderr);
     }
+
+    if (SSL_CTX_use_PrivateKey_file(ctx, "server.key", SSL_FILETYPE_PEM) <= 0) {
+        std::cerr << "Loading private key failed\n";
+        ERR_print_errors_fp(stderr);
+    }
+
+
 }
 
 void Server::createTcpSocket_SSLType(){
