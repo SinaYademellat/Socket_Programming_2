@@ -1,5 +1,9 @@
 *.pdf
 *.out
 *.o
+*.pem
+server.crt
+server.key
+openssl.cnf
 .vscode/
 build/
